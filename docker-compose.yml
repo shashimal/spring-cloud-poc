@@ -1,0 +1,25 @@
+version: '3'
+services:
+    rabbitmq:
+        container_name: rabbitmq
+        image: rabbitmq:management
+        ports:
+            - 5672:5672
+            - 15672:15672
+    config-server:
+        container_name: config-server
+        build:
+            context: .
+            dockerfile: ./config-server/Dockerfile
+        image: config-server:latest
+        expose:
+            - 9090
+        ports:
+            - 9090:9090
+        depends_on:
+            - rabbitmq
+        networks:
+            - spring-cloud
+networks:
+    spring-cloud:
+        driver: bridge
