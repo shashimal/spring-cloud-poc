@@ -12,12 +12,14 @@ services:
             context: .
             dockerfile: ./config-server/Dockerfile
         image: config-server:latest
+        entrypoint: /opt/entrypoint.sh
         expose:
             - 9090
         ports:
             - 9090:9090
         depends_on:
             - rabbitmq
+            - eureka-server
         networks:
             - spring-cloud
     eureka-server:
