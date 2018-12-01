@@ -20,6 +20,56 @@ services:
             - rabbitmq
         networks:
             - spring-cloud
+    eureka-server:
+        container_name: eureka-server
+        build:
+            context: .
+            dockerfile: ./service-registry/Dockerfile
+        image: eureka-server:latest
+        expose:
+            - 9093
+        ports:
+            - 9093:9093
+        networks:
+            - spring-cloud
+    web-app:
+        container_name: web-app
+        build:
+            context: .
+            dockerfile: ./web-app/Dockerfile
+        image: web-app:latest
+        environment:
+            RABBIT_HOST: rabbitmq
+        entrypoint: /opt/entrypoint.sh
+        expose:
+            - 9091
+        ports:
+            - 9091:9091
+        networks:
+            - spring-cloud
+        depends_on:
+            - config-server
+            - eureka-server
+            - rabbitmq
+    product-service:
+        container_name: product-service
+        build:
+            context: .
+            dockerfile: ./product-service/Dockerfile
+        image: product-service:latest
+        environment:
+            RABBIT_HOST: rabbitmq
+        entrypoint: /opt/entrypoint.sh
+        expose:
+            - 9092
+        ports:
+            - 9092:9092
+        networks:
+            - spring-cloud
+        depends_on:
+            - config-server
+            - eureka-server
+            - rabbitmq
 networks:
     spring-cloud:
         driver: bridge
